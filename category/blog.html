@@ -132,6 +132,23 @@
 		<p class="continue"><a href="/blog/2015/extracting-background-from-a-video-using-opencv-and-python.html">Continue reading &raquo;</a></p>
 </article>
 <hr />
+<article>
+	<h3><a href="/blog/2015/vagrantfile-for-opencv-and-python.html">Vagrantfile for OpenCV and Python</a></h3>
+	<h6>Written by <a href="/author/dmitry-ogurtsov.html">Dmitry Ogurtsov</a> in <a href="/category/blog.html">Blog</a> on Thu 08 October 2015. Tags: <a href="/tag/opencv.html">opencv</a>, <a href="/tag/python.html">python</a>, <a href="/tag/vagrant.html">vagrant</a>, </h6>
+	<p>I use the following script to create an Ubuntu 15.04 Vagrant box with OpenCV with Python bindings support:</p>
+<div class="highlight"><pre><span class="c1"># -*- mode: ruby -*-</span>
+<span class="c1"># vi: set ft=ruby :</span>
+
+<span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;ubuntu/vivid64&quot;</span>
+  <span class="c1">#config.vm.network &quot;forwarded_port&quot;, guest: 8000, host: 8000</span>
+
+  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="ss">inline</span><span class="p">:</span> <span class="o">&lt;&lt;-</span><span class="no">SHELL</span>
+
+<span class="sh">    version ...</span></pre></div>
+		<p class="continue"><a href="/blog/2015/vagrantfile-for-opencv-and-python.html">Continue reading &raquo;</a></p>
+</article>
+<hr />
 
 
                         </div>
@@ -146,8 +163,9 @@
                             <div class="panel">
                                 <h5>Tags</h5>
                                 <ul class="tag-cloud">
-                                    <li><a href="/tag/opencv.html" class="tag-4">opencv</a></li>
-                                    <li><a href="/tag/python.html" class="tag-4">python</a></li>
+                                    <li><a href="/tag/python.html" class="tag-1">python</a></li>
+                                    <li><a href="/tag/vagrant.html" class="tag-4">vagrant</a></li>
+                                    <li><a href="/tag/opencv.html" class="tag-1">opencv</a></li>
                                 </ul>
                             </div>
 

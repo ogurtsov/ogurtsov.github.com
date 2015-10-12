@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <title>Extracting background from a video using OpenCV and Python</title>
+        <title>Dmitry Ogurtsov</title>
         <meta name="description" content="Dmitry Ogurtsov — Software Engineer">
         <meta name="author" content="Dmitry Ogurtsov">
         <meta name="google-site-verification" content="fgRH6vFbY6Af3mB9ljnlHQ9T0JjTpTn8AWAdphJByUc" />
@@ -53,7 +53,7 @@
                     <ul class="off-canvas-list">
                         <li><a href="">Home</a></li>
                         <li><label>Categories</label></li>
-                            <li class="active"><a href="/category/blog.html">Blog</a></li>
+                            <li ><a href="/category/blog.html">Blog</a></li>
 
                         <li><label>Links</label></li>
 
@@ -77,7 +77,7 @@
 
                     <section class="top-bar-section">
                         <ul class="left">
-                                <li class="active"><a href="/category/blog.html">Blog</a></li>
+                                <li ><a href="/category/blog.html">Blog</a></li>
                         </ul>
                         <ul class="right">                                                                                                                                           
                                                                                                           
@@ -94,57 +94,31 @@
                     <div class="row">
                         <!-- Main Content -->
                         <div class="medium-9 small-12 columns" role="content">
+                            <div class="row">
+                                <div class="small-12 columns">
+                                    <h2>Posts Tagged With 'vagrant'</h2>
+                                </div>
+                            </div>
+
 <article>
-	<h2>Extracting background from a video using OpenCV and Python</h2>
-	<p>Input video example:</p>
-<p><a href="http://www.youtube.com/watch?v=Jjj-5OQiT-0"><img alt="Video" src="http://img.youtube.com/vi/Jjj-5OQiT-0/0.jpg" /></a></p>
-<p>Result:</p>
-<p><img alt="Photo" src="/blog/2015/attached/bg.png" /></p>
-<p>Code:</p>
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+	<h3><a href="/blog/2015/vagrantfile-for-opencv-and-python.html">Vagrantfile for OpenCV and Python</a></h3>
+	<h6>Written by <a href="/author/dmitry-ogurtsov.html">Dmitry Ogurtsov</a> in <a href="/category/blog.html">Blog</a> on Thu 08 October 2015. Tags: <a href="/tag/opencv.html">opencv</a>, <a href="/tag/python.html">python</a>, <a href="/tag/vagrant.html">vagrant</a>, </h6>
+	<p>I use the following script to create an Ubuntu 15.04 Vagrant box with OpenCV with Python bindings support:</p>
+<div class="highlight"><pre><span class="c1"># -*- mode: ruby -*-</span>
+<span class="c1"># vi: set ft=ruby :</span>
 
+<span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;ubuntu/vivid64&quot;</span>
+  <span class="c1">#config.vm.network &quot;forwarded_port&quot;, guest: 8000, host: 8000</span>
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="n">capture</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">first_frame</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="ss">inline</span><span class="p">:</span> <span class="o">&lt;&lt;-</span><span class="no">SHELL</span>
 
-    <span class="n">average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">first_frame</span><span class="p">)</span>
-
-    <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">cv2</span><span class="o">.</span><span class="n">accumulateWeighted</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">average</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
-        <span class="n">bg</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">convertScaleAbs</span><span class="p">(</span><span class="n">average</span><span class="p">)</span>
-        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s">&#39;bg.png&#39;</span><span class="p">,</span> <span class="n">bg</span><span class="p">)</span>
-
-    <span class="n">capture</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
-
-
-
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</pre></div>
-	<hr/>
-	<h6>Written by <a href="/author/dmitry-ogurtsov.html">Dmitry Ogurtsov</a> in <a href="/category/blog.html">Blog</a> on Fri 09 October 2015. Tags: <a href="/tag/opencv.html">opencv</a>, <a href="/tag/python.html">python</a>, </h6>
+<span class="sh">    version ...</span></pre></div>
+		<p class="continue"><a href="/blog/2015/vagrantfile-for-opencv-and-python.html">Continue reading &raquo;</a></p>
 </article>
+<hr />
 
-<hr/>
-<div class="row">
-	<div class="small-12 columns">
-		<h3>Comments</h3>
-		<div id="disqus_thread"></div>
-		<script type="text/javascript">
-			var disqus_shortname = 'ogurtsovgithubio';
-			(function() {
-				var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-				dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-			})();
-		</script>
-		<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-		<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-	</div>
-</div>
+
                         </div>
                         <!-- End Main Content -->
                         <!-- Sidebar -->

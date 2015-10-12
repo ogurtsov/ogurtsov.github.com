@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <title>Extracting background from a video using OpenCV and Python</title>
+        <title>Vagrantfile for OpenCV and Python</title>
         <meta name="description" content="Dmitry Ogurtsov — Software Engineer">
         <meta name="author" content="Dmitry Ogurtsov">
         <meta name="google-site-verification" content="fgRH6vFbY6Af3mB9ljnlHQ9T0JjTpTn8AWAdphJByUc" />
@@ -95,37 +95,52 @@
                         <!-- Main Content -->
                         <div class="medium-9 small-12 columns" role="content">
 <article>
-	<h2>Extracting background from a video using OpenCV and Python</h2>
-	<p>Input video example:</p>
-<p><a href="http://www.youtube.com/watch?v=Jjj-5OQiT-0"><img alt="Video" src="http://img.youtube.com/vi/Jjj-5OQiT-0/0.jpg" /></a></p>
-<p>Result:</p>
-<p><img alt="Photo" src="/blog/2015/attached/bg.png" /></p>
-<p>Code:</p>
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+	<h2>Vagrantfile for OpenCV and Python</h2>
+	<p>I use the following script to create an Ubuntu 15.04 Vagrant box with OpenCV with Python bindings support:</p>
+<div class="highlight"><pre><span class="c1"># -*- mode: ruby -*-</span>
+<span class="c1"># vi: set ft=ruby :</span>
 
+<span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;ubuntu/vivid64&quot;</span>
+  <span class="c1">#config.vm.network &quot;forwarded_port&quot;, guest: 8000, host: 8000</span>
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="n">capture</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">first_frame</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="ss">inline</span><span class="p">:</span> <span class="o">&lt;&lt;-</span><span class="no">SHELL</span>
 
-    <span class="n">average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">first_frame</span><span class="p">)</span>
+<span class="sh">    version=&quot;$(wget -q -O - http://sourceforge.net/projects/opencvlibrary/files/opencv-unix | egrep -m1 -o &#39;\&quot;[0-9](\.[0-9])+&#39; | cut -c2-)&quot;</span>
+<span class="sh">    echo &quot;Installing OpenCV&quot; $version</span>
+<span class="sh">    mkdir OpenCV</span>
+<span class="sh">    cd OpenCV</span>
+<span class="sh">    echo &quot;Removing any pre-installed ffmpeg and x264&quot;</span>
+<span class="sh">    sudo apt-get -qq remove ffmpeg x264 libx264-dev</span>
+<span class="sh">    sudo add-apt-repository &quot;deb http://us.archive.ubuntu.com/ubuntu vivid main multiverse&quot;</span>
+<span class="sh">    sudo add-apt-repository &quot;deb http://us.archive.ubuntu.com/ubuntu precise main universe&quot;</span>
+<span class="sh">    sudo apt-get update</span>
+<span class="sh">    echo &quot;Installing Dependencies&quot;</span>
+<span class="sh">    sudo apt-get -qq install libopencv-dev build-essential checkinstall cmake pkg-config yasm libjpeg-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libdc1394-22-dev libxine-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libv4l-dev python-dev python-numpy libtbb-dev libqt4-dev libgtk2.0-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev x264 v4l-utils ffmpeg libxvidcore4</span>
 
-    <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">cv2</span><span class="o">.</span><span class="n">accumulateWeighted</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">average</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
-        <span class="n">bg</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">convertScaleAbs</span><span class="p">(</span><span class="n">average</span><span class="p">)</span>
-        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s">&#39;bg.png&#39;</span><span class="p">,</span> <span class="n">bg</span><span class="p">)</span>
+<span class="sh">    wget -O OpenCV-$version.zip http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/$version/opencv-&quot;$version&quot;.zip/download</span>
+<span class="sh">    echo &quot;Installing OpenCV&quot; $version</span>
+<span class="sh">    unzip OpenCV-$version.zip</span>
+<span class="sh">    cd opencv-$version</span>
+<span class="sh">    mkdir build</span>
+<span class="sh">    cd build</span>
+<span class="sh">    cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON ..</span>
+<span class="sh">    make -j2</span>
+<span class="sh">    sudo checkinstall</span>
+<span class="sh">    sudo sh -c &#39;echo &quot;/usr/local/lib&quot; &gt; /etc/ld.so.conf.d/opencv.conf&#39;</span>
+<span class="sh">    sudo ldconfig</span>
 
-    <span class="n">capture</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+<span class="sh">    echo &quot;OpenCV&quot; $version &quot;ready to be used&quot;</span>
 
+<span class="sh">    sudo apt-get install -y python-opencv</span>
+<span class="sh">    sudo ln /dev/null /dev/raw1394</span>
 
+<span class="no">  SHELL</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">end</span>
 </pre></div>
 	<hr/>
-	<h6>Written by <a href="/author/dmitry-ogurtsov.html">Dmitry Ogurtsov</a> in <a href="/category/blog.html">Blog</a> on Fri 09 October 2015. Tags: <a href="/tag/opencv.html">opencv</a>, <a href="/tag/python.html">python</a>, </h6>
+	<h6>Written by <a href="/author/dmitry-ogurtsov.html">Dmitry Ogurtsov</a> in <a href="/category/blog.html">Blog</a> on Thu 08 October 2015. Tags: <a href="/tag/opencv.html">opencv</a>, <a href="/tag/python.html">python</a>, <a href="/tag/vagrant.html">vagrant</a>, </h6>
 </article>
 
 <hr/>
